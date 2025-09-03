@@ -1,6 +1,5 @@
 import subprocess
 from pathlib import Path
-from app.config import USE_DOCKER
 from app.utils.file_manager import update_job_status
 
 
