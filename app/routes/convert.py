@@ -14,7 +14,7 @@ from app.services.converter import run_ffmpeg
 router = APIRouter(prefix="/convert", tags=["convert"])
 
 
-@router.post("/")
+@router.post("")
 def convert_file(
     file: UploadFile,
     background_tasks: BackgroundTasks,
