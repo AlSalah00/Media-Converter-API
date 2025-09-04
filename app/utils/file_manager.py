@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import UploadFile, HTTPException, status
 import shutil
 import magic  
-import clamd  
+import subprocess
 
 from app.config import UPLOAD_DIR, OUTPUT_DIR, JOBS
 
@@ -65,15 +65,22 @@ def validate_file(upload_file: UploadFile):
         )
 
 def scan_file(path: Path):
-    """Scan file using ClamAV before conversion."""
+    """Scan file using ClamAV CLI."""
     try:
-        result = clamd_client.scan(str(path))
-        if result and any("FOUND" in r for r in result.values()):
-            path.unlink(missing_ok=True)  # delete infected file
+        result = subprocess.run(
+            ["clamscan", "--no-summary", str(path)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        if result.returncode == 1:  # 1 = virus found
+            path.unlink(missing_ok=True)
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="File rejected: contains malware",
             )
+        elif result.returncode not in (0, 1):
+            raise Exception(result.stderr.decode())
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
