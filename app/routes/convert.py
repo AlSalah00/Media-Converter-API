@@ -23,19 +23,23 @@ def convert_file(
     """
     Start a new conversion job.
     """
-    job_id = generate_job_id()
+    try:
+        job_id = generate_job_id()
 
-    # Save input file
-    input_path = save_upload_file(file, job_id)
-    output_path = prepare_output_path(job_id, output_format)
+        # Save input file
+        input_path = save_upload_file(file, job_id)
+        output_path = prepare_output_path(job_id, output_format)
 
-    # Register job
-    register_job(job_id, input_path, output_path)
+        # Register job
+        register_job(job_id, input_path, output_path)
 
-    # Run FFmpeg in background
-    background_tasks.add_task(run_ffmpeg, input_path, output_path, job_id)
+        # Run FFmpeg in background
+        background_tasks.add_task(run_ffmpeg, input_path, output_path, job_id)
 
-    return {"job_id": job_id, "status": "processing"}
+        return {"job_id": job_id, "status": "processing"}
+    except Exception as e:
+        print(f"[ERROR] {e}")
+        raise
 
 
 @router.get("/status/{job_id}")
