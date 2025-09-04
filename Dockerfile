@@ -10,8 +10,11 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Update ClamAV database
+RUN freshclam || true
+
 # Copy app
 COPY . .
 
 # Start uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "10000"]
+CMD ["sh", "-c", "freshclam -d && uvicorn app.main:app --host 0.0.0.0 --port 10000"]
