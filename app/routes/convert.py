@@ -17,7 +17,7 @@ router = APIRouter(prefix="/convert", tags=["convert"])
 @router.post("/")
 def convert_file(
     file: UploadFile,
-    output_format: str,
+    output_format: str = Form(...),
     background_tasks: BackgroundTasks,
 ):
     """
