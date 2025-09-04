@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 # Install ffmpeg + clamav
-RUN apt-get update && apt-get install -y ffmpeg clamav libmagic1 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y ffmpeg clamav clamav-daemon libmagic1 && rm -rf /var/lib/apt/lists/*
 
 # Workdir
 WORKDIR /app
