@@ -4,6 +4,7 @@ from fastapi import UploadFile, HTTPException, status
 import shutil
 import magic  
 import subprocess
+import clamd
 
 from app.config import UPLOAD_DIR, OUTPUT_DIR, JOBS
 
