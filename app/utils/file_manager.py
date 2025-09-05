@@ -112,9 +112,12 @@ def register_job(job_id: str, input_path: Path, output_path: Path):
         "output": str(output_path),
     }
 
-def update_job_status(job_id: str, status: str):
+def update_job_status(job_id: str, status: str, reason: str | None = None):
     if job_id in JOBS:
-        JOBS[job_id]["status"] = status
+        if reason:
+            JOBS[job_id]["status"] = f"{status}: {reason}"
+        else:
+            JOBS[job_id]["status"] = status
 
 def get_job(job_id: str) -> dict | None:
     return JOBS.get(job_id)
