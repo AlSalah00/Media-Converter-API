@@ -9,7 +9,7 @@ from app.utils.file_manager import (
     get_job,
     cleanup_job_files,
 )
-from app.services.converter import run_ffmpeg
+from app.services.converter import process_job
 
 router = APIRouter(prefix="/convert", tags=["convert"])
 
@@ -34,7 +34,7 @@ def convert_file(
         register_job(job_id, input_path, output_path)
 
         # Run FFmpeg in background
-        background_tasks.add_task(run_ffmpeg, input_path, output_path, job_id)
+        background_tasks.add_task(process_job, input_path, output_path, job_id)
 
         return {"job_id": job_id, "status": "processing"}
     except Exception as e:
