@@ -17,7 +17,7 @@ def generate_job_id() -> str:
 def validate_file(upload_file: UploadFile):
     """Triple-check file: extension, header, and magic must all match allowed types."""
 
-    # --- Extension check ---
+    # Extension check
     ext = Path(upload_file.filename).suffix.lower().lstrip(".")
     ext_to_mime = {
         "jpg": "image/jpeg",
@@ -44,7 +44,7 @@ def validate_file(upload_file: UploadFile):
             detail=f"Unsupported file extension: .{ext}",
         )
 
-    # --- Header check ---
+    # Header check
     if upload_file.content_type != expected_mime:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -52,7 +52,7 @@ def validate_file(upload_file: UploadFile):
                    f".{ext} expected {expected_mime}, got {upload_file.content_type}",
         )
 
-    # --- Magic check ---
+    # Magic check
     sample_bytes = upload_file.file.read(2048)  # read a chunk
     upload_file.file.seek(0)  # reset pointer
     mime = magic.Magic(mime=True)
@@ -99,9 +99,6 @@ def save_upload_file(upload_file: UploadFile, job_id: str) -> Path:
 
     with input_path.open("wb") as buffer:
         shutil.copyfileobj(upload_file.file, buffer)
-
-    # Scan with ClamAV
-    scan_file(input_path)
 
     return input_path
 
